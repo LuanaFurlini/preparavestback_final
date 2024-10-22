@@ -31,6 +31,26 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// Rota de soft delete
+router.delete('/user/:id', async (req, res) => {
+    try {
+        const { id } = req.params; // O ID é extraído da URL
+        
+        // Verifica se o usuário existe
+        const userExists = await pool.query`SELECT * FROM usuario WHERE id = ${id} AND is_deleted = 0`;
+        
+        if (userExists.recordset.length === 0) {
+            return res.status(404).json('Usuário não encontrado ou já deletado.');
+        }
+
+        // Atualiza o usuário para marcar como deletado
+        await pool.query`UPDATE usuario SET is_deleted = 1 WHERE id = ${id}`;
+        return res.status(200).json('Usuário deletado com sucesso.');
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json('Error on server!');
+    }
+});
 
 // rota de cadastro
 router.post('/user/novo', async(req, res)=>{
