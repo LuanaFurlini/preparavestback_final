@@ -13,7 +13,7 @@ router.post('/login', async (req, res) => {
         const { email, senha } = req.body;
         if (email != null && email !== "" && senha != null && senha !== "") {
             const { recordset } = await pool.query`
-                SELECT id FROM usuario 
+                SELECT id, avatarId FROM usuario 
                 WHERE email = ${email} 
                 AND senha = ${senha} 
                 AND is_deleted = 0`; // Verifica se o usuário não está deletado
